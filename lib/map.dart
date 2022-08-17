@@ -7,15 +7,15 @@ import 'package:flutter_map_marker_cluster/flutter_map_marker_cluster.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:map_app/provider/provider.dart';
+import 'package:provider/provider.dart';
 
 import 'carouselslider.dart';
+import 'color_data.dart';
 import 'helper_location.dart';
 
 class MyHomePage extends StatefulWidget {
-   MyHomePage({Key? key,required this.mark,required this.loc}) : super(key: key);
 
-  List<Marker> mark = [];
-  List loc = [];
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -23,90 +23,11 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   double? lat;
+
   double? long;
-  PopupController _popupController = PopupController();
-  int pointIndex = 0;
 
-  String color = 'red';
+  final PopupController _popupController = PopupController();
 
-  // late List<Marker> markers;
-  List points = [
-    LatLng(30.035877710902387, 31.201476010628447)
-    // LatLng(lat!, long!)
-  ];
-
-  // BitmapDescriptor myIcon;
-  @override
-  void initState() {
-    LocationHelper.getCheckLocation();
-    var xx = data_mark('1');
-    print(xx);
-    print('-----------------');
-    data_map('0');
-    print(widget.mark);
-    print(widget.loc);
-
-    pointIndex = 0;
-    // markers = [
-    //   // // Marker(
-    //   // //     anchorPos: AnchorPos.align(AnchorAlign.center),
-    //   // //     height: 30,
-    //   // //     width: 30,
-    //   // //     point: LatLng(30.679793, 30.944752),
-    //   // //     builder: (context) => const Icon(
-    //   // //           FontAwesomeIcons.locationDot,
-    //   // //           color: Colors.red,
-    //   // //         )),
-    //   // Marker(
-    //   //     anchorPos: AnchorPos.align(AnchorAlign.center),
-    //   //     height: 30,
-    //   //     width: 30,
-    //   //     point: LatLng(30.68468960025776, 30.950258077911204),
-    //   //     builder: (context) => const Icon(
-    //   //           FontAwesomeIcons.houseMedical,
-    //   //           color: Colors.red,
-    //   //           size: 20,
-    //   //         )),
-    //   // // Marker(
-    //   // //   anchorPos: AnchorPos.align(AnchorAlign.center),
-    //   // //   height: 30,
-    //   // //   width: 30,
-    //   // //   point: LatLng(30.676459, 30.942412),
-    //   // //   builder: (context) => const Icon(
-    //   // //     Icons.pin_drop,
-    //   // //     color: Colors.red,
-    //   // //   ),
-    //   // // ),
-    //   // // Marker(
-    //   // //     anchorPos: AnchorPos.align(AnchorAlign.center),
-    //   // //     height: 30,
-    //   // //     width: 30,
-    //   // //     point: LatLng(30.674392, 30.943120),
-    //   // //     builder: (context) => const Icon(Icons.pin_drop)),
-    //   // // Marker(
-    //   // //     anchorPos: AnchorPos.align(AnchorAlign.center),
-    //   // //     height: 30,
-    //   // //     width: 30,
-    //   // //     point: LatLng(30.682080, 30.946796),
-    //   // //     builder: (context) => const Icon(Icons.pin_drop)),
-    // ];
-  }
-
-  String data1 = '0xe51a';
-  List<Marker> mark = [];
-  List loc = [];
-
-  List cate = [];
-  List<Icon> icon = [
-    // Icon(IconDataSolid(int.parse(data1)),
-    const Icon(FontAwesomeIcons.suitcaseMedical),
-    const Icon(FontAwesomeIcons.suitcaseMedical),
-    const Icon(FontAwesomeIcons.personDigging),
-    const Icon(FontAwesomeIcons.shopify),
-    const Icon(FontAwesomeIcons.bookOpenReader),
-    const Icon(FontAwesomeIcons.bed),
-    const Icon(FontAwesomeIcons.car),
-  ];
   final List<String> imgList = [
     'https://images.unsplash.com/photo-1520342868574-5fa3804e551c?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=6ff92caffcdd63681a35134a6770ed3b&auto=format&fit=crop&w=1951&q=80',
     'https://images.unsplash.com/photo-1522205408450-add114ad53fe?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=368f45b0888aeb0b7b08e3a1084d3ede&auto=format&fit=crop&w=1950&q=80',
@@ -115,6 +36,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    var pro=Provider.of<func_provider>(context);
     return Scaffold(
       // appBar: AppBar(
       //   title: const Text('Map'),
@@ -143,8 +65,9 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Stack(children: [
         FlutterMap(
           options: MapOptions(
-            center: points[0],
-            zoom: 10,
+            center: LatLng(30.0374562, 31.2095052)
+            ,
+            zoom: 12,
             plugins: [
               MarkerClusterPlugin(),
             ],
@@ -163,7 +86,7 @@ class _MyHomePageState extends State<MyHomePage> {
               anchor: AnchorPos.align(AnchorAlign.center),
               fitBoundsOptions:
                   const FitBoundsOptions(padding: EdgeInsets.all(50)),
-              markers: widget.mark,
+              markers: pro.mark,
               popupOptions: PopupOptions(
                 popupSnap: PopupSnap.markerTop,
                 popupController: _popupController,
@@ -224,24 +147,24 @@ class _MyHomePageState extends State<MyHomePage> {
                     width: 15,
                   ),
                   scrollDirection: Axis.horizontal,
-                  itemCount: cate.length,
+                  itemCount: pro.cate.length,
                   itemBuilder: (context, index) => ElevatedButton.icon(
                     style: ButtonStyle(
                       backgroundColor:
-                          MaterialStateProperty.all<Color>(Color(0xFFfb7750)),
+                          MaterialStateProperty.all<Color>(Colors.transparent),
                       shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                         RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(22.0),
                         ),
                       ),
                     ),
-                    onPressed: () {
-                      data_map(cate[index]['id']);
+                    onPressed: () async {
+                     pro.data_map(pro.cate[index]['id']);
+                     pro.data_mark(pro.cate[index]['id']);
                     },
                     icon: Icon(
-                      IconDataSolid(
-                        int.parse(data1),
-                      ),
+                      IconDataSolid(int.parse(pro.cate[index]['icon_name'])),
+                      color: HexColor.fromHex(pro.cate[index]['color']),
                       // icon: icon[index],
                       // label: Text(cate[index]['name']),
                       //  style: ButtonStyle(
@@ -253,7 +176,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       //              side:
                       //              const BorderSide(color: Colors.white)))),
                     ),
-                    label: Text(cate[index]['name']),
+                    label: Text(pro.cate[index]['name'],style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold),),
                   ),
                 ),
               )
@@ -269,12 +192,7 @@ class _MyHomePageState extends State<MyHomePage> {
               onPressed: () {
                 var pos = LocationHelper.getCurrentLocation();
                 pos.then((value) {
-                  setState(() {
-                    lat = value?.latitude;
-                    long = value?.longitude;
-                  });
-                  print(lat);
-                  print(long);
+
                 });
               },
               icon: const Icon(FontAwesomeIcons.childReaching),
@@ -283,49 +201,8 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ),
         ),
-        CarouselWithDotsPage(imgList: imgList),
+        // CarouselWithDotsPage(imgList: imgList),
       ]),
     );
-  }
-
-  void data_map(String id) async {
-    var D = await get(Uri.parse(
-        'https://ibtikarsoft.net/mapapi/categories.php?lang=ar&cat=$id'));
-    if (D.statusCode == 200) {
-      var x = json.decode(D.body);
-      setState(() {
-        cate = x;
-      });
-    }
-  }
-
-  Future<List<Marker>> data_mark(String id) async {
-    var D = await get(Uri.parse(
-        'https://ibtikarsoft.net/mapapi/map_markers.php?lang=ar&lat=30.0374562&long=31.2095052&cat=$id'));
-    if (D.statusCode == 200) {
-      var x = await json.decode(D.body);
-      setState(() {
-        loc = x;
-        loc.forEach((element) {
-          mark.add(
-            Marker(
-                anchorPos: AnchorPos.align(AnchorAlign.center),
-                height: 30,
-                width: 30,
-                point: LatLng(double.parse(element['lat']),
-                    double.parse(element['long'])),
-                builder: (context) => const Icon(
-                      FontAwesomeIcons.houseMedical,
-                      color: Colors.red,
-                      size: 20,
-                    )),
-          );
-          print(mark);
-        });
-        print(mark);
-        print(loc);
-      });
-    }
-    return mark;
   }
 }

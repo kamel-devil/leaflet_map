@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -5,6 +6,8 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:map_app/provider/provider.dart';
+import 'package:provider/provider.dart';
 
 import 'helper_location.dart';
 import 'map.dart';
@@ -16,23 +19,33 @@ class Splash extends StatefulWidget {
 }
 
 class _SplashState extends State<Splash> {
+  // Timer? _time;
+  //
+  // _startDelay() {
+  //   _time = Timer(const Duration(seconds: 2), _goNext);
+  // }
+  //
+  // _goNext() {
+  //   Navigator.pushReplacement(
+  //       context, MaterialPageRoute(builder: (context) =>  MyHomePage()));
+  // }
   @override
   void initState() {
-    data_mark('1');
-    LocationHelper.checkEnternet();
-    LocationHelper.getCheckLocation();
-    super.initState();
-    _navigatetohome();
+     LocationHelper.checkEnternet();
+     LocationHelper.getCheckLocation();
+     // _startDelay();
+     _navigatetohome();
+     super.initState();
   }
-  _navigatetohome()async{
-    await Future.delayed(const Duration(milliseconds: 3000),(){});
-    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> MyHomePage(loc:loc,mark:mark,)));
-  }
+  _navigatetohome(){
+     Future.delayed(const Duration(seconds: 3),(){
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> MyHomePage()));
 
-  List<Marker> mark = [];
-  List loc = [];
+    });
+  }
   @override
   Widget build(BuildContext context) {
+     // print(Provider.of<func_provider>(context).loc);
     return Scaffold(
       body: Container(
         height: double.infinity,
@@ -92,33 +105,4 @@ class _SplashState extends State<Splash> {
     );
   }
 
-  Future<List<Marker>> data_mark(String id) async {
-    var D = await get(Uri.parse(
-        'https://ibtikarsoft.net/mapapi/map_markers.php?lang=ar&lat=30.0374562&long=31.2095052&cat=$id'));
-    if (D.statusCode == 200) {
-      var x = await json.decode(D.body);
-      setState(() {
-        loc = x;
-        loc.forEach((element) {
-          mark.add(
-            Marker(
-                anchorPos: AnchorPos.align(AnchorAlign.center),
-                height: 30,
-                width: 30,
-                point: LatLng(double.parse(element['lat']),
-                    double.parse(element['long'])),
-                builder: (context) => const Icon(
-                  FontAwesomeIcons.houseMedical,
-                  color: Colors.red,
-                  size: 20,
-                )),
-          );
-          print(mark);
-        });
-        print(mark);
-        print(loc);
-      });
-    }
-    return mark;
-  }
 }
