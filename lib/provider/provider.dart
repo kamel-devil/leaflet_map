@@ -3,17 +3,23 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:latlong2/latlong.dart';
 
-class func_provider with ChangeNotifier {
+import '../tools/color_data.dart';
+
+class Funcprovider with ChangeNotifier {
   List<Marker> mark = [];
   List loc = [];
   List cate = [];
   List sliderData = [];
+  double? lat;
+  double? long;
 
 
-  void data_map(String id) async {
+  void dataMap(String id) async {
     var D = await get(Uri.parse(
         'https://ibtikarsoft.net/mapapi/categories.php?lang=ar&cat=$id'));
     if (D.statusCode == 200) {
@@ -24,18 +30,18 @@ class func_provider with ChangeNotifier {
     notifyListeners();
   }
 
-  data_mark(String id) async {
+  dataMark(String id) async {
     String url =
         'https://ibtikarsoft.net/mapapi/map_markers.php?lang=ar&lat=30.0374562&long=31.2095052&cat=$id';
-    final res = await get(Uri.parse(url)).then((value) {
-      print(value.body);
+     await get(Uri.parse(url)).then((value) {
+      // print(value.body);
       if (value.statusCode == 200) {
         var data = json.decode(value.body);
         loc = data;
-        print('-----------------------------');
-        print(loc);
+        // print('-----------------------------');
+        // print(loc);
         mark.clear();
-        loc.forEach((element) {
+        for (var element in loc) {
           mark.add(Marker(
             width: 50,
             height: 50,
@@ -44,82 +50,89 @@ class func_provider with ChangeNotifier {
             builder: (ctx) => InkWell(
               child: Icon(
                 IconDataSolid(int.parse(element['icon_name'])),
-                // color: HexColor.fromHex(element['color']),
+                 color: HexColor.fromHex(element['color']),
                 size: 25.0,
               ),
               onTap: () {
-                showModalBottomSheet(
-                    context: ctx,
-                    builder: (builder) {
-                      return Container(
-                        height: 350.0,
-                        color: Colors.transparent,
-                        //could change this to Color(0xFF737373),
-                        //so you don't have to change MaterialApp canvasColor
-                        child: Container(
-                          decoration: const BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(10.0),
-                                  topRight: Radius.circular(10.0))),
-                        ),
-                      );
-                    });
+
               },
             ),
           ));
-        });
-        print('----------');
-        print(mark);
-        print('----------');
+        }
+        mark.add(Marker(
+          width: 50,
+          height: 50,
+          point: LatLng(
+              lat!, long!),
+          builder: (ctx) => const Icon(
+            FontAwesomeIcons.locationDot,
+            color: Colors.redAccent,
+            size: 35.0,
+          ),
+        ));
+        // print('----------');
+        // print(mark);
+        // print('----------');
         notifyListeners();
 
-        print(data);
+        // print(data);
       }
     });
 
-    // if (res.statusCode == 200) {
-    //   var data = json.decode(res.body);
-    //   for (int i in data) {
-    //     location = data;
-    //     print(data);
-    //     markers.add(Marker(
-    //       point: LatLng(
-    //           double.parse(data[i]['lat']), double.parse(data[i]['long'])),
-    //       builder: (ctx) => Container(
-    //         key: const Key('blue'),
-    //         child: const Icon(
-    //           Icons.location_on,
-    //           color: Colors.red,
-    //           size: 30.0,
-    //         ),
-    //       ),
-    //     ));
-    //
-    //     print(markers);
-    //     notifyListeners();
-    //     print('----------------');
-    //     print(data);
-    //     print('----------------------');
-    //     return data;
-    //   }
-    // } else {
-    //   print("Error");
-    // }
   }
-  data_slider(String id) async {
+  dataSlider(String id) async {
     String url =
-        'https://ibtikarsoft.net/mapapi/map_slider.php?lang=ar&lat=30.4203482&long=31.0699247&cat=$id';
+        'https://ibtikarsoft.net/mapapi/map_slider.php?lang=ar&lat=30.0374562&long=31.2095052&cat=$id';
     final res = await get(Uri.parse(url));
 
     if (res.statusCode == 200) {
       var data = json.decode(res.body);
       sliderData = data;
-      print(sliderData);
+      // print('=====================================');
+      // print(sliderData);
       notifyListeners();
       return data;
     } else {
       print("Error");
+    }
+  }
+  Future<Position?> getCheckLocation() async {
+    Geolocator.checkPermission().then((value){
+      print(value);
+      if (value ==LocationPermission.denied){
+        Geolocator.requestPermission().then((value) {
+          if (value==LocationPermission.denied){
+            print("denied");
+          }
+          else if(value==LocationPermission.whileInUse){
+            print('go ');
+            getCurrentLocation();
+          }else{
+            getCurrentLocation();
+          }
+        });
+      }
+    });
+    return null;
+  }
+  Future<Position?> getCurrentLocation() async{
+    await Geolocator.getCurrentPosition(desiredAccuracy:LocationAccuracy.high);
+    var lastPsition = await Geolocator.getLastKnownPosition();
+    lat= lastPsition?.latitude;
+    long= lastPsition?.longitude;
+    return lastPsition;
+
+
+
+
+  }
+
+  checkEnternet()async{
+    bool result = await InternetConnectionChecker().hasConnection;
+    if(result == true) {
+      print('Connection Done');
+    } else {
+      print('Connection failed');
     }
   }
 
