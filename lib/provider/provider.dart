@@ -10,6 +10,8 @@ class func_provider with ChangeNotifier {
   List<Marker> mark = [];
   List loc = [];
   List cate = [];
+  List sliderData = [];
+
 
   void data_map(String id) async {
     var D = await get(Uri.parse(
@@ -104,4 +106,21 @@ class func_provider with ChangeNotifier {
     // } else {
     //   print("Error");
     // }
-  }}
+  }
+  data_slider(String id) async {
+    String url =
+        'https://ibtikarsoft.net/mapapi/map_slider.php?lang=ar&lat=30.4203482&long=31.0699247&cat=$id';
+    final res = await get(Uri.parse(url));
+
+    if (res.statusCode == 200) {
+      var data = json.decode(res.body);
+      sliderData = data;
+      print(sliderData);
+      notifyListeners();
+      return data;
+    } else {
+      print("Error");
+    }
+  }
+
+}

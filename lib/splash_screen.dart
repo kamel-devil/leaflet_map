@@ -45,7 +45,7 @@ class _SplashState extends State<Splash> {
   }
   @override
   Widget build(BuildContext context) {
-     // print(Provider.of<func_provider>(context).loc);
+    print(Provider.of<func_provider>(context).loc);
     return Scaffold(
       body: Container(
         height: double.infinity,
