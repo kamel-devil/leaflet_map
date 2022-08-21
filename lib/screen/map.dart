@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_marker_cluster/flutter_map_marker_cluster.dart';
@@ -19,7 +21,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final PopupController _popupController = PopupController();
-
+  Timer? timer;
   @override
   Widget build(BuildContext context) {
     var pro = Provider.of<Funcprovider>(context);
@@ -52,9 +54,12 @@ class _MyHomePageState extends State<MyHomePage> {
         FlutterMap(
           options: MapOptions(
             onPositionChanged: (position, bo) {
+              pro.dataMark(
+                  '0', position.center!.latitude, position.center!.longitude);
               print(position.center);
-            } ,
+            },
             center: LatLng(pro.lat!, pro.long!),
+            //   center: LatLng(30.0374562, 31.2095052),
             zoom: 18,
             plugins: [
               MarkerClusterPlugin(),
@@ -67,38 +72,47 @@ class _MyHomePageState extends State<MyHomePage> {
               urlTemplate: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
               subdomains: ['a', 'b', 'c'],
             ),
-             MarkerLayerOptions(markers: pro.mark),
+            MarkerLayerOptions(markers: pro.mark),
             // MarkerClusterLayerOptions(
             //   maxClusterRadius: 120,
             //   disableClusteringAtZoom: 6,
             //   size: const Size(40, 40),
             //   anchor: AnchorPos.align(AnchorAlign.center),
-            //   fitBoundsOptions:
-            //       const FitBoundsOptions(padding: EdgeInsets.all(50)),
-            //   markers: pro.mark,
-            //   popupOptions: PopupOptions(
-            //     popupSnap: PopupSnap.markerTop,
-            //     popupController: _popupController,
-            //     popupBuilder: (_, maker) => Container(
-            //       width: 200,
-            //       height: 100,
-            //       color: Colors.white,
-            //       child: GestureDetector(
-            //         onTap: () => debugPrint('Popup tap!'),
-            //         child: Text('Container popup for marker at '),
-            //       ),
-            //     ),
+            //   fitBoundsOptions: const FitBoundsOptions(
+            //     padding: EdgeInsets.all(50),
             //   ),
+            //   markers: pro.mark,
+            //   polygonOptions: const PolygonOptions(
+            //       borderColor: Colors.blueAccent,
+            //       color: Colors.black12,
+            //       borderStrokeWidth: 3),
+            //   popupOptions: PopupOptions(
+            //       popupSnap: PopupSnap.markerTop,
+            //       popupController: _popupController,
+            //       popupBuilder: (i, marker) => GestureDetector(
+            //             onTap: () {},
+            //             child: Container(
+            //               width: 300,
+            //               height: 200,
+            //               color: Colors.white,
+            //               child: Row(
+            //                 mainAxisAlignment: MainAxisAlignment.start,
+            //                 crossAxisAlignment: CrossAxisAlignment.start,
+            //                 children: [],
+            //               ),
+            //             ),
+            //           )),
             //   builder: (context, markers) {
             //     return FloatingActionButton(
-            //         onPressed: null, child: Text(markers.length.toString()));
+            //       onPressed: () {
+            //         print('///////////////-----------------------**');
+            //       },
+            //       child: Text(markers.length.toString()),
+            //     );
             //   },
-            // )
+            // ),
           ],
         ),
-
-
-
 
         Container(
           height: 250,
@@ -113,7 +127,10 @@ class _MyHomePageState extends State<MyHomePage> {
                     icon: const Icon(Icons.arrow_back),
                     onPressed: () {
                       pro.dataMap('0');
-                      pro.dataMark('0',pro.lat!,pro.long!);
+                      pro.dataMark('0',
+                          pro.lat!,
+                          pro.long!
+                      );
                     },
                   ),
                   Expanded(
@@ -167,7 +184,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                     onPressed: () async {
                       pro.dataMap(pro.cate[index]['id']);
-                      // pro.dataMark(pro.cate[index]['id'],);
+                      pro.dataMark(pro.cate[index]['id'],pro.lat!,pro.long!);
                     },
                     icon: Icon(
                       IconDataSolid(int.parse(pro.cate[index]['icon_name'])),
@@ -193,9 +210,7 @@ class _MyHomePageState extends State<MyHomePage> {
             child: IconButton(
               onPressed: () {
                 var pos = pro.getCurrentLocation();
-                pos.then((value) {
-
-                });
+                pos.then((value) {});
               },
               icon: const Icon(FontAwesomeIcons.childReaching),
               alignment: Alignment.bottomLeft,
@@ -278,7 +293,6 @@ class _MyHomePageState extends State<MyHomePage> {
                                       color: Colors.black54,
                                       fontSize: 18.0,
                                     ),
-
                                   ),
                                   Row(
                                     children: [
@@ -288,9 +302,9 @@ class _MyHomePageState extends State<MyHomePage> {
                                             scrollDirection: Axis.horizontal,
                                             shrinkWrap: true,
                                             itemCount: p.sliderData[index]
-                                            ['rate'],
+                                                ['rate'],
                                             itemBuilder: (context, index) =>
-                                            const Icon(
+                                                const Icon(
                                               FontAwesomeIcons.solidStar,
                                               color: Colors.amber,
                                               size: 25.0,
@@ -301,11 +315,11 @@ class _MyHomePageState extends State<MyHomePage> {
                                           child: ListView.builder(
                                             scrollDirection: Axis.horizontal,
                                             shrinkWrap: true,
-                                            itemCount:  -(p.sliderData[index]
-                                            ['rate']) +5
-                                                ,
+                                            itemCount: -(p.sliderData[index]
+                                                    ['rate']) +
+                                                5,
                                             itemBuilder: (context, index) =>
-                                            const Icon(
+                                                const Icon(
                                               FontAwesomeIcons.star,
                                               color: Colors.amber,
                                               size: 25.0,
@@ -367,5 +381,4 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
     );
   }
-
 }

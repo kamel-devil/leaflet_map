@@ -16,7 +16,7 @@ class _TestState extends State<Test> {
   Widget build(BuildContext context) {
     var pro = Provider.of<Funcprovider>(context);
 
-    if (pro.result! && pro.lat != null) {
+    if (pro.result && pro.lat != null) {
       return  Animatedsp();
     } else {
       return const Scaffold(

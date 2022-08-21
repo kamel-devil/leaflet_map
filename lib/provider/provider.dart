@@ -17,7 +17,7 @@ class Funcprovider with ChangeNotifier {
   List sliderData = [];
   double? lat;
   double? long;
-  bool? result;
+  bool result=false;
 
   void dataMap(String id) async {
     var D = await get(Uri.parse(
@@ -30,9 +30,13 @@ class Funcprovider with ChangeNotifier {
     notifyListeners();
   }
 
-  dataMark(String id,double lat,double long) async {
+  dataMark(String id,
+      double lat,
+      double long
+      ) async {
     String url =
         'https://ibtikarsoft.net/mapapi/map_markers.php?lang=ar&lat=$lat&long=$long&cat=$id';
+        // 'https://ibtikarsoft.net/mapapi/map_markers.php?lang=ar&lat=30.0374562&long=31.2095052&cat=$id';
      await get(Uri.parse(url)).then((value) {
       // print(value.body);
       if (value.statusCode == 200) {
@@ -83,6 +87,8 @@ class Funcprovider with ChangeNotifier {
   dataSlider(String id) async {
     String url =
         'https://ibtikarsoft.net/mapapi/map_slider.php?lang=ar&lat=$lat&long=$long&cat=$id';
+    // 'https://ibtikarsoft.net/mapapi/map_slider.php?lang=ar&lat=30.0374562&long=31.2095052&cat=$id';
+
     final res = await get(Uri.parse(url));
 
     if (res.statusCode == 200) {
