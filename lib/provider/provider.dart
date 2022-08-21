@@ -17,7 +17,7 @@ class Funcprovider with ChangeNotifier {
   List sliderData = [];
   double? lat;
   double? long;
-
+  bool? result;
 
   void dataMap(String id) async {
     var D = await get(Uri.parse(
@@ -30,9 +30,9 @@ class Funcprovider with ChangeNotifier {
     notifyListeners();
   }
 
-  dataMark(String id) async {
+  dataMark(String id,double lat,double long) async {
     String url =
-        'https://ibtikarsoft.net/mapapi/map_markers.php?lang=ar&lat=30.0374562&long=31.2095052&cat=$id';
+        'https://ibtikarsoft.net/mapapi/map_markers.php?lang=ar&lat=$lat&long=$long&cat=$id';
      await get(Uri.parse(url)).then((value) {
       // print(value.body);
       if (value.statusCode == 200) {
@@ -63,7 +63,7 @@ class Funcprovider with ChangeNotifier {
           width: 50,
           height: 50,
           point: LatLng(
-              lat!, long!),
+              lat, long),
           builder: (ctx) => const Icon(
             FontAwesomeIcons.locationDot,
             color: Colors.redAccent,
@@ -82,7 +82,7 @@ class Funcprovider with ChangeNotifier {
   }
   dataSlider(String id) async {
     String url =
-        'https://ibtikarsoft.net/mapapi/map_slider.php?lang=ar&lat=30.0374562&long=31.2095052&cat=$id';
+        'https://ibtikarsoft.net/mapapi/map_slider.php?lang=ar&lat=$lat&long=$long&cat=$id';
     final res = await get(Uri.parse(url));
 
     if (res.statusCode == 200) {
@@ -107,33 +107,44 @@ class Funcprovider with ChangeNotifier {
           else if(value==LocationPermission.whileInUse){
             print('go ');
             getCurrentLocation();
+            notifyListeners();
           }else{
-            getCurrentLocation();
           }
         });
       }
+      else {
+        getCurrentLocation();
+      }
     });
+    notifyListeners();
     return null;
   }
-  Future<Position?> getCurrentLocation() async{
-    await Geolocator.getCurrentPosition(desiredAccuracy:LocationAccuracy.high);
-    var lastPsition = await Geolocator.getLastKnownPosition();
-    lat= lastPsition?.latitude;
-    long= lastPsition?.longitude;
+  Future<Position?> getCurrentLocation() async {
+    await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    Position? lastPsition = await Geolocator.getLastKnownPosition();
+    print('------------------------**-----------**--------');
+    print(lastPsition?.latitude);
+    print(lastPsition?.longitude);
+    lat=lastPsition!.latitude;
+    long=lastPsition.longitude;
+    dataMark('0', lat!, long!);
+    dataMap('0');
+    dataSlider('0');
+    notifyListeners();
     return lastPsition;
-
-
-
-
+    // locationMessage="$position.latitude ,$position.longitude";
   }
-
   checkEnternet()async{
-    bool result = await InternetConnectionChecker().hasConnection;
-    if(result == true) {
+    bool result1 = await InternetConnectionChecker().hasConnection;
+    if(result1 == true) {
       print('Connection Done');
     } else {
+
       print('Connection failed');
     }
+
+    result=result1;
+    notifyListeners();
   }
 
 }

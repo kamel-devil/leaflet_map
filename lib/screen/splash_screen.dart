@@ -19,14 +19,14 @@ class _SplashState extends State<Splash> {
      super.initState();
   }
   _navigatetohome(){
-     Future.delayed(const Duration(seconds: 2),(){
+     Future.delayed(const Duration(seconds: 3),(){
       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> const MyHomePage()));
 
     });
   }
   @override
   Widget build(BuildContext context) {
-     print(Provider.of<Funcprovider>(context).loc);
+     // print(Provider.of<Funcprovider>(context).loc);
     return Scaffold(
       body: Container(
         height: double.infinity,

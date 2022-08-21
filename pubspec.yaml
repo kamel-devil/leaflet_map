@@ -32,11 +32,7 @@ dependencies:
   flutter_map: ^2.2.0
   flutter_map_marker_cluster: ^0.5.3
   latlong2: ^0.8.1
-  latlng: ^0.2.0
   flutter_map_marker_popup: ^3.2.0
-  tuple: ^2.0.0
-  collection: ^1.16.0
-  flutter_image: ^4.1.3
   font_awesome_flutter: ^10.1.0
   geolocator: ^9.0.1
   http: ^0.13.5
@@ -44,7 +40,6 @@ dependencies:
   animated_splash_screen: ^1.3.0
   internet_connection_checker: ^0.0.1+4
   carousel_slider: ^4.1.1
-  adobe_xd: ^2.0.1
   provider: ^6.0.3
   url_launcher: ^6.1.5
 

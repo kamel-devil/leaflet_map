@@ -18,10 +18,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  double? lat;
-
-  double? long;
-
   final PopupController _popupController = PopupController();
 
   @override
@@ -55,7 +51,10 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Stack(children: [
         FlutterMap(
           options: MapOptions(
-            center: LatLng(30.0374562, 31.2095052),
+            onPositionChanged: (position, bo) {
+              print(position.center);
+            } ,
+            center: LatLng(pro.lat!, pro.long!),
             zoom: 18,
             plugins: [
               MarkerClusterPlugin(),
@@ -114,7 +113,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     icon: const Icon(Icons.arrow_back),
                     onPressed: () {
                       pro.dataMap('0');
-                      pro.dataMark('0');
+                      pro.dataMark('0',pro.lat!,pro.long!);
                     },
                   ),
                   Expanded(
@@ -168,7 +167,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                     onPressed: () async {
                       pro.dataMap(pro.cate[index]['id']);
-                      pro.dataMark(pro.cate[index]['id']);
+                      // pro.dataMark(pro.cate[index]['id'],);
                     },
                     icon: Icon(
                       IconDataSolid(int.parse(pro.cate[index]['icon_name'])),
